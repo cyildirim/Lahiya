@@ -1,7 +1,10 @@
-import annotations.Description;
+package com.lahiya;
+
+import com.lahiya.annotations.Description;
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.experimental.categories.Category;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -11,9 +14,7 @@ import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.junit.experimental.categories.Category;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -29,38 +30,6 @@ public class LahiyaTestCaseReport
 {
     private static Reflections reflections;
     private static Logger logger = LoggerFactory.getLogger(LahiyaTestCaseReport.class);
-
-    public static void main(String args[]) throws IOException
-    {
-
-        reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage("com.sahibinden"))
-                .setScanners(new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner())
-        );
-
-
-        Map<String, TestClass> testClasses = printMethods("ParallelExecutable");
-        Map<String, TestClass> serialExecutable = printMethods("SerialExecutable");
-        Map<String, TestClass> androidSuite = printMethods("AndroidClient");
-        Map<String, TestClass> iosSuite = printMethods("IosClient");
-        logger.info("methods collected");
-
-        List<Map<String, TestClass>> list = new ArrayList<>();
-        list.add(testClasses);
-        list.add(serialExecutable);
-        list.add(androidSuite);
-        list.add(iosSuite);
-
-        Gson gson = new Gson();
-        FileInputStream fileInputStream = new FileInputStream("src/test/resources/test-list-html-report/index.tpl.html");
-        String overviewTemplate = IOUtils.toString(fileInputStream);
-
-
-        String editedTemplate = overviewTemplate.replace("##TEST_DATA##", gson.toJson(list));
-
-        FileUtils.writeStringToFile(new File("target/test-list-html-report/index.html"), editedTemplate);
-        logger.info("report file generated");
-    }
 
     private static boolean isAnnotationArrayContainsClassName(String className, Class<?>[] annotationArray)
     {
@@ -174,6 +143,33 @@ public class LahiyaTestCaseReport
         }
 
         return testClassesMap;
+    }
+
+    public void generateReport(String packageName,List<String> flagList) throws IOException
+    {
+
+        reflections = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(packageName))
+                .setScanners(new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner())
+        );
+
+
+        List<Map<String, TestClass>> list = new ArrayList<>();
+
+        for (String flag : flagList)
+        {
+            list.add(printMethods(flag));
+        }
+
+        Gson gson = new Gson();
+        String overviewTemplate = IOUtils.toString(getClass().getResourceAsStream("index.tpl.html"));
+        ;
+
+
+        String editedTemplate = overviewTemplate.replace("##TEST_DATA##", gson.toJson(list));
+
+        FileUtils.writeStringToFile(new File("target/test-list-html-report/index.html"), editedTemplate);
+        logger.info("report file generated");
     }
 
 

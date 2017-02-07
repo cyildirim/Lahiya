@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lahiya Test Case List Report</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.2.0/sandstone/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <style>
+		body { padding-top:10px; }
+	</style>
+
+    <!-- JS -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.23/angular.min.js"></script>
+    <script>
+	angular.module('sortApp', [])
+	.directive('myTable', function($compile) {
+		return {
+			restrict: 'AE',
+			link: function (scope, element, attrs) {
+			  var html ;
+			  scope.$watch('searchTest', function(){
+				var html = '<table class="table table-bordered table-striped">';
+				html += '<thead><tr><td>TestName </td><td>Description</td><td>Test Suite</td></tr></thead>';
+				// var desiredFilter = $filter(attrs);
+
+
+				angular.forEach(scope[attrs.rows], function (suiterow, index) {
+
+					if ("class" == scope.searchSwitch) {
+						angular.forEach(suiterow, function (row, index) {
+							if (row.name.toLowerCase().includes(scope.searchTest.toLowerCase())) {
+								html += '<tr><th>' + row.name + '</th><th></th><th></th></tr>';
+									angular.forEach(row.testMethodList, function (subrow, index) {
+										html += '<tr><td>' + subrow.name + '</td><td>' + subrow.description + '</td><td>' + subrow.testSuite + '</td></tr>';
+									});
+							}
+
+						});
+					} else{
+						angular.forEach(suiterow, function (row, index) {
+								html += '<tr><th>' + row.name + '</th><th></th><th>' + row.testMethodList[0].testSuite + '</th></tr>';
+								var isVisibleHeader = false;
+								angular.forEach(row.testMethodList, function (subrow, index) {
+
+									if (scope.searchTest == undefined ) {
+										html += '<tr><td>' + subrow.name + '</td><td>' + subrow.description + '</td><td>' + subrow.testSuite + '</td></tr>';
+									}else if( "testname" == scope.searchSwitch  ){
+										if (subrow.name.toLowerCase().includes(scope.searchTest.toLowerCase())) {
+											html += '<tr><td>' + subrow.name + '</td><td>' + subrow.description + '</td><td>' + subrow.testSuite + '</td></tr>';
+											isVisibleHeader = true;
+										}
+									}else if( "description" == scope.searchSwitch){
+										if (subrow.description.toLowerCase().includes(scope.searchTest.toLowerCase())) {
+											html += '<tr><td>' + subrow.name + '</td><td>' + subrow.description + '</td><td>' + subrow.testSuite + '</td></tr>';
+											isVisibleHeader = true;
+										}
+									}
+
+								});
+								if (scope.searchTest !== undefined) {
+									if ("testname" == scope.searchSwitch) {
+										if (!isVisibleHeader && (!row.name.toLowerCase().includes(scope.searchTest.toLowerCase())) ) {
+											html = html.replace('<tr><th>' + row.name + '</th><th></th><th>' + row.testMethodList[0].testSuite + '</th></tr>','')
+										}
+									}else if("description" == scope.searchSwitch){
+										if (!isVisibleHeader) {
+											html = html.replace('<tr><th>' + row.name + '</th><th></th><th>' + row.testMethodList[0].testSuite + '</th></tr>','')
+										}
+									}
+
+								}
+						})
+					}
+				})
+
+				html += '</table>';
+				// element.replaceWith(html);
+				var rendered = $compile(html)(scope);
+				element.empty();
+				element.append(rendered);
+			  });
+
+			}
+		}
+	})
+  .controller('mainController', function($scope, $location, $anchorScroll) {
+	$scope.searchSwitch = "testname";
+
+	$scope.gotoTop = function() {
+	  $location.hash('search-area');
+	  $anchorScroll();
+	};
+
+	$scope.clearField = function(){
+		$scope.searchTest = '';
+	}
+
+	// create the list of sushi rolls
+	$scope.testCases = ##TEST_DATA##
+
+  });
+
+  </script>
+    <style type="text/css">
+	  #search-area label{
+		margin: 5px;
+	  }
+	  #scrollToTop{
+		width: 45px;
+		height: 45px;
+		position: fixed;
+		bottom: 15px;
+		right: 15px;
+		cursor: pointer;
+		background: #ccc;
+		border-radius: 40px;
+		padding-left: 6px;
+	  }
+	  #scrollToTop i{
+		font-size: 36px;
+		margin: 5px;
+	  }
+  </style>
+
+</head>
+<body>
+<div class="container" ng-app="sortApp" ng-controller="mainController">
+    <h1> Lahiya  | Test Case List </h1>
+    <div id="search-area" class="alert alert-default">
+        <form>
+            <div class="form-group">
+                <br/>
+                <label><input type="radio" ng-model="searchSwitch" name="searchSwitch" value="testname" checked="checked" /> By Test Name </label>
+                <label><input type="radio" ng-model="searchSwitch" name="searchSwitch" value="description"/> By Description </label>
+                <label><input type="radio" ng-model="searchSwitch" name="searchSwitch" value="class"/> By Class </label>
+                <button ng-click="clearField()" class="btn btn-primary btn-sm">clear</button>
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                    <input type="text" class="form-control" placeholder="Search Test" ng-model="searchTest" ng-change="$scope.apply()" />
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+
+    <my-table rows="testCases" ></my-table>
+    <div id="scrollToTop" ng-click="gotoTop()"><i class="fa fa-angle-double-up" aria-hidden="true"></i></div>
+</div>
+</body>
+</html>

@@ -1,3 +1,5 @@
+package com.lahiya;
+
 public class TestMethod
 {
     private String name;
