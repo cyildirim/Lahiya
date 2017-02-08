@@ -162,8 +162,7 @@ public class LahiyaTestCaseReport
         }
 
         Gson gson = new Gson();
-        String overviewTemplate = IOUtils.toString(getClass().getResourceAsStream("index.tpl.html"));
-        ;
+        String overviewTemplate = IOUtils.toString(getClass().getResourceAsStream("/index.tpl.html"));
 
 
         String editedTemplate = overviewTemplate.replace("##TEST_DATA##", gson.toJson(list));
