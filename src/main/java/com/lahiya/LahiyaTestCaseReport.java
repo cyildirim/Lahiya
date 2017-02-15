@@ -4,6 +4,10 @@ import com.lahiya.annotations.Description;
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.junit.experimental.categories.Category;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
@@ -25,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
-public class LahiyaTestCaseReport
+@Mojo(name = "lahiya")
+public class LahiyaTestCaseReport extends AbstractMojo
 {
     private static Reflections reflections;
     private static Logger logger = LoggerFactory.getLogger(LahiyaTestCaseReport.class);
@@ -172,4 +176,19 @@ public class LahiyaTestCaseReport
     }
 
 
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException
+    {
+//            TODO parameters should add as list to this area on maven
+        List<String> list = Arrays.asList("SeleniumRegressionTestSuite");
+        try
+        {
+//            TODO parameters should add to as string this area on maven
+            generateReport("com.sahibinden",list);
+        }
+        catch (IOException e)
+        {
+            getLog().error("sorry, report cannot created");
+        }
+    }
 }
