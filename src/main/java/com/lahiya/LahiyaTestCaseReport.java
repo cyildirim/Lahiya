@@ -8,6 +8,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.junit.experimental.categories.Category;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
@@ -15,6 +16,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,13 +34,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 @Mojo(name = "lahiya")
 public class LahiyaTestCaseReport extends AbstractMojo
 {
-    private static Reflections reflections;
+    @Parameter( property = "lahiya.packageName", defaultValue = "" )
+    private String packageName;
+
+    @Parameter(property = "lahiya.suites")
+    private List<String> suites;
+
+    private Reflections reflections;
     private static Logger logger = LoggerFactory.getLogger(LahiyaTestCaseReport.class);
 
-    private static boolean isAnnotationArrayContainsClassName(String className, Class<?>[] annotationArray)
+    private  boolean isAnnotationArrayContainsClassName(String className, Class<?>[] annotationArray)
     {
         for (Class<?> aClass : annotationArray)
         {
@@ -48,7 +60,7 @@ public class LahiyaTestCaseReport extends AbstractMojo
         return false;
     }
 
-    private static boolean isAnnotationKeyContains(String annotationName, Annotation[] annotations)
+    private  boolean isAnnotationKeyContains(String annotationName, Annotation[] annotations)
     {
         for (Annotation annotation : annotations)
         {
@@ -62,7 +74,7 @@ public class LahiyaTestCaseReport extends AbstractMojo
 
     }
 
-    private static Map<String, TestClass> printMethods(String searchClass)
+    private  Map<String, TestClass> printMethods(String searchClass)
     {
 
 
@@ -152,8 +164,15 @@ public class LahiyaTestCaseReport extends AbstractMojo
     public void generateReport(String packageName,List<String> flagList) throws IOException
     {
 
+        URL testClassesURL = Paths.get("target/test-classes").toUri().toURL();
+
+        URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{testClassesURL},
+                ClasspathHelper.staticClassLoader());
+
         reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(packageName))
+                .setUrls(ClasspathHelper.forPackage(packageName,classLoader))
+                .addClassLoader(classLoader)
+                .filterInputsBy(new FilterBuilder().includePackage(packageName))
                 .setScanners(new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner())
         );
 
@@ -179,12 +198,13 @@ public class LahiyaTestCaseReport extends AbstractMojo
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException
     {
-//            TODO parameters should add as list to this area on maven
-        List<String> list = Arrays.asList("SeleniumRegressionTestSuite");
+        logger.info("package name {}",packageName);
+
+        logger.info("suites name {}",suites);
+
         try
         {
-//            TODO parameters should add to as string this area on maven
-            generateReport("com.sahibinden",list);
+            generateReport(packageName, suites);
         }
         catch (IOException e)
         {
