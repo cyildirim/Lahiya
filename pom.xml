@@ -12,6 +12,21 @@
     <description>
         Lahiya, prepares html report for tests on the project.
     </description>
+
+    <scm>
+        <connection>scm:git:git@github.com:cyildirim/Lahiya.git</connection>
+        <developerConnection>scm:git:ssh://github.com:cyildirim/Lahiya.git</developerConnection>
+        <url>https://github.com/cyildirim/Lahiya/tree/master</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <build>
         <pluginManagement>
             <plugins>
