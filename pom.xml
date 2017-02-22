@@ -27,6 +27,15 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <id>cyildirim</id>
+            <name>Can YILDIRIM</name>
+            <organization>Sahibinden.com</organization>
+            <organizationUrl>http://www.sahibinden.com</organizationUrl>
+        </developer>
+    </developers>
+
     <build>
         <pluginManagement>
             <plugins>
