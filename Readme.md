@@ -6,7 +6,7 @@ Lahiya test case report maven plugin for : Java + JUnit + maven-surefire-plugin
 Usage: 
 ```
  <plugin>
-    <groupId>com.lahiyareport</groupId>
+    <groupId>com.github.cyildirim</groupId>
     <artifactId>lahiya-test-report-maven-plugin</artifactId>
     <version>0.1</version>
     <configuration>
