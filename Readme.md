@@ -8,7 +8,7 @@ Usage:
  <plugin>
     <groupId>com.github.cyildirim</groupId>
     <artifactId>lahiya-test-report-maven-plugin</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <configuration>
         <packageName>com.packagename</packageName>
         <suites>
@@ -23,6 +23,6 @@ Usage:
 Command line execution: 
 
 ```
-mvn com.lahiyareport:lahiya-test-report-maven-plugin:lahiya -DskipTests 
+mvn com.github.cyildirim:lahiya-test-report-maven-plugin:lahiya -DskipTests 
 
 ```
