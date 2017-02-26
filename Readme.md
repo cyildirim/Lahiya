@@ -3,7 +3,7 @@
 
 Lahiya test case report maven plugin for : Java + JUnit + maven-surefire-plugin
 
-Usage: 
+##Usage: 
 ```
  <plugin>
     <groupId>com.github.cyildirim</groupId>
@@ -20,11 +20,15 @@ Usage:
 
 ```
 
-Command line execution: 
+## Command line execution: 
 
 ```
 mvn com.github.cyildirim:lahiya-test-report-maven-plugin:lahiya -DskipTests 
 
 ```
 
+
+##Screenshot 
+
+![lahiya_screenshot](https://raw.githubusercontent.com/cyildirim/Lahiya/34ce8032832a50520adf404394a2202461e5094e/screenshots/lahiya-usage.gif)
 
