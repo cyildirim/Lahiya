@@ -26,3 +26,5 @@ Command line execution:
 mvn com.github.cyildirim:lahiya-test-report-maven-plugin:lahiya -DskipTests 
 
 ```
+
+
